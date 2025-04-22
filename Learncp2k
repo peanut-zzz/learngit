@@ -1,3 +1,7 @@
-mpirun --allow-run-as-root -np ${num_cores} -x OMP_NUM_THREADS=1 --cpu-set 0-$((num_cores - 1)) --bind-to cpulist:ordered \
--x UCX_LOG_LEVEL=0 -x VERBS_LOG_LEVEL=0 -x UCX_TLS=sm -x UCX_NET_DEVICES=hns_2:1 -mca pml ucx -mca btl ^vader,tcp,openib,uct cp2k.psmp \
-$inputfile 2>&1 | tee ${num_cores}_p_512.txt
+Report bugs to http://www.open-mpi.org/community/help/
+[host0815:3208583] *** Process received signal ***
+[host0815:3208583] Signal: Segmentation fault (11)
+[host0815:3208583] Signal code: Address not mapped (1)
+[host0815:3208583] Failing at address: (nil)
+[host0815:3208583] [ 0] linux-vdso.so.1(__kernel_rt_sigreturn+0x0)[0x400003c7e910]
+[host0815:3208583] *** End of error message ***
