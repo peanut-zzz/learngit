@@ -1,7 +1,18 @@
-Report bugs to http://www.open-mpi.org/community/help/
-[host0815:3208583] *** Process received signal ***
-[host0815:3208583] Signal: Segmentation fault (11)
-[host0815:3208583] Signal code: Address not mapped (1)
-[host0815:3208583] Failing at address: (nil)
-[host0815:3208583] [ 0] linux-vdso.so.1(__kernel_rt_sigreturn+0x0)[0x400003c7e910]
-[host0815:3208583] *** End of error message ***
+CC          = gcc
+CXX         = g++
+AR          = ar -r
+FC          = mpif90
+LD          = mpif90
+#
+DFLAGS      =  -D__parallel  -D__FFTW3  -D__LIBINT -D__LIBXC -D__SCALAPACK -D__GSL -D__SPGLIB  
+#
+WFLAGS      = -Werror=aliasing -Werror=ampersand -Werror=c-binding-type -Werror=intrinsic-shadow -Werror=intrinsics-std -Werror=line-truncation -Werror=tabs -Werror=target-lifetime -Werror=underflow -Werror=unused-but-set-variable -Werror=unused-variable -Werror=unused-dummy-argument -Werror=conversion -Werror=zerotrip -Werror=uninitialized -Wno-maybe-uninitialized -Wuse-without-only 
+#
+FCDEBFLAGS  = -ffree-form -std=f2008 -fimplicit-none -fallow-argument-mismatch
+CFLAGS      = -march=native -fno-omit-frame-pointer -g  -O3 -funroll-loops $(PROFOPT) -fopenmp -I/var/hmpi/include/openmpi -I/var/hmpi/include/openmpi/opal/mca/hwloc/hwloc201/hwloc/include -I/var/hmpi/include -I'/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/generated'  -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/openblas-0.3.6/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libint-v2.6.0-cp2k-lmax-5/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/include' -I/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/include $(DFLAGS)
+FCFLAGS     = -march=native -fno-omit-frame-pointer -g  -O3 -funroll-loops $(PROFOPT) -fopenmp -I/var/hmpi/include/openmpi -I/var/hmpi/include/openmpi/opal/mca/hwloc/hwloc201/hwloc/include -I/var/hmpi/include -I'/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/generated' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/openblas-0.3.6/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libint-v2.6.0-cp2k-lmax-5/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/include' -I/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/include $(FCDEBFLAGS) $(WFLAGS) $(DFLAGS)
+#
+LDFLAGS     = $(FCFLAGS) -Wl,--enable-new-dtags -Wl,-rpath -Wl,/var/hmpi/lib -Wl,--enable-new-dtags -L/var/hmpi/lib   -L'/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/lib' -Wl,-rpath='/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/libint-v2.6.0-cp2k-lmax-5/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/scalapack-2.0.2/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/scalapack-2.0.2/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/lib'
+LIBS        = -lsymspg -lgsl -lgslcblas -lscalapack -lxcf03 -lxc -lint2 -lfftw3_mpi -lfftw3 -lfftw3_omp   -lmpi  -lkplblas_armv9p_v2409 -lstdc++
+#
+FYPPFLAGS   = -n --line-marker-format=gfortran5
