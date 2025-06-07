@@ -1,18 +1,11 @@
-CC          = gcc
-CXX         = g++
-AR          = ar -r
-FC          = mpif90
-LD          = mpif90
-#
-DFLAGS      =  -D__parallel  -D__FFTW3  -D__LIBINT -D__LIBXC -D__SCALAPACK -D__GSL -D__SPGLIB  
-#
-WFLAGS      = -Werror=aliasing -Werror=ampersand -Werror=c-binding-type -Werror=intrinsic-shadow -Werror=intrinsics-std -Werror=line-truncation -Werror=tabs -Werror=target-lifetime -Werror=underflow -Werror=unused-but-set-variable -Werror=unused-variable -Werror=unused-dummy-argument -Werror=conversion -Werror=zerotrip -Werror=uninitialized -Wno-maybe-uninitialized -Wuse-without-only 
-#
-FCDEBFLAGS  = -ffree-form -std=f2008 -fimplicit-none -fallow-argument-mismatch
-CFLAGS      = -march=native -fno-omit-frame-pointer -g  -O3 -funroll-loops $(PROFOPT) -fopenmp -I/var/hmpi/include/openmpi -I/var/hmpi/include/openmpi/opal/mca/hwloc/hwloc201/hwloc/include -I/var/hmpi/include -I'/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/generated'  -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/openblas-0.3.6/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libint-v2.6.0-cp2k-lmax-5/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/include' -I/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/include $(DFLAGS)
-FCFLAGS     = -march=native -fno-omit-frame-pointer -g  -O3 -funroll-loops $(PROFOPT) -fopenmp -I/var/hmpi/include/openmpi -I/var/hmpi/include/openmpi/opal/mca/hwloc/hwloc201/hwloc/include -I/var/hmpi/include -I'/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/generated' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/openblas-0.3.6/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libint-v2.6.0-cp2k-lmax-5/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/include' -I'/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/include' -I/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/include $(FCDEBFLAGS) $(WFLAGS) $(DFLAGS)
-#
-LDFLAGS     = $(FCFLAGS) -Wl,--enable-new-dtags -Wl,-rpath -Wl,/var/hmpi/lib -Wl,--enable-new-dtags -L/var/hmpi/lib   -L'/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/lib' -Wl,-rpath='/home/hpchq/KPL_BLAS_Dev/blas/out/release/kplblas/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/fftw-3.3.8/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/libint-v2.6.0-cp2k-lmax-5/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/libxc-4.3.4/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/scalapack-2.0.2/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/scalapack-2.0.2/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/gsl-2.5/lib' -L'/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/lib' -Wl,-rpath='/home/hpchq/cp2k-7.1/tools/toolchain/install/spglib-1.12.2/lib'
-LIBS        = -lsymspg -lgsl -lgslcblas -lscalapack -lxcf03 -lxc -lint2 -lfftw3_mpi -lfftw3 -lfftw3_omp   -lmpi  -lkplblas_armv9p_v2409 -lstdc++
-#
-FYPPFLAGS   = -n --line-marker-format=gfortran5
+#!/bin/bash
+#!/bin/bash
+source /home/hpc/bisheng4.2_setenv.sh
+source /home/hpc/mpi/hmpi25.0.0_setenv.sh
+source /home/hpc/hpchq/openfoam/OpenFOAM-v2212/etc/bashrc WM_COMPILER=Clang WM_PRECISION_OPTION=SPDP
+
+mpirun --allow-run-as-root -np 128 renumberMesh -overwrite -parallel
+
+time -p mpirun --allow-run-as-root -x UCX_LOG_LEVEL=0 -x VERBS_LOG_LEVEL=0 -x UCX_NET_DEVICES=hns_1:1 -x UCX_TLS=sm\
+	 -np 512 --cpu-set 4-35,42-73,80-111,118-149,156-187,194-225,232-263,270-301,308-339,346-377,384-415,422-453,460-491,498-529,536-567,574-605 \
+	--bind-to cpulist:ordered pisoFoam -parallel 2>&1 | tee openfoam-2025-06-07-SPDP.log
